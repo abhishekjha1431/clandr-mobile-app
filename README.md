@@ -95,11 +95,11 @@ Experience the app in action: [View Live Demo](https://www.youtube.com/@0bhishek
 
 ### Environment Setup
 
-Create a `.env` file in the root directory:
+Uptae the `.env` file in the root directory:
 
 ```env
-EXPO_PUBLIC_API_URL=your_api_url
-EXPO_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key
+EXPO_PUBLIC_API_URL=https://example-api.vercel.app/  
 ```
 
 ## 🏗️ Project Structure
