@@ -1,8 +1,9 @@
 import ScheduleChart from "@/components/ScheduleChart";
+import ScheduleEditor from "@/components/ScheduleEditor";
 import { useApiClient } from "@/lib/api";
 import { useSaveSchedule, useSchedule } from "@/lib/queries";
 import { useAuth } from "@clerk/clerk-expo";
-import { Calendar, Clock, Users } from "lucide-react-native";
+import { Calendar, Clock, Edit, Users } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
@@ -10,6 +11,7 @@ import {
   SafeAreaView,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 
@@ -19,6 +21,7 @@ export default function MyScheduleScreen() {
 
   const { data: scheduleData, isLoading, error } = useSchedule();
   const saveScheduleMutation = useSaveSchedule();
+  const [editorVisible, setEditorVisible] = useState(false);
 
   // Show loading state
   if (isLoading) {
@@ -96,11 +99,20 @@ export default function MyScheduleScreen() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View className="pt-4 pb-6 px-4">
-          <Text className="text-3xl font-bold text-gray-800 mb-2">
-            My Schedule
-          </Text>
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-3xl font-bold text-gray-800">
+              My Schedule
+            </Text>
+            <TouchableOpacity
+              onPress={() => setEditorVisible(true)}
+              className="bg-blue-500 rounded-2xl px-4 py-2 flex-row items-center"
+            >
+              <Edit size={16} color="white" />
+              <Text className="text-white font-semibold ml-2">Edit</Text>
+            </TouchableOpacity>
+          </View>
           <Text className="text-gray-600">
-            Manage your availability and bookings
+            Manage your availability and view bookings
           </Text>
         </View>
 
@@ -158,64 +170,54 @@ export default function MyScheduleScreen() {
         <View className="px-4 mb-6">
           <View className="bg-white rounded-3xl shadow-lg p-6">
             <Text className="text-xl font-bold text-gray-800 mb-4">
-              Recent Bookings
+              Upcoming Bookings
             </Text>
 
-            {[
-              {
-                name: "Sarah Johnson",
-                event: "Coffee Chat ☕",
-                time: "Today, 2:00 PM",
-                status: "confirmed",
-              },
-              {
-                name: "Mike Chen",
-                event: "Play football⚽",
-                time: "Tomorrow, 10:00 AM",
-                status: "pending",
-              },
-              {
-                name: "Emma Wilson",
-                event: "Coding Session 💻",
-                time: "Friday, 3:00 PM",
-                status: "confirmed",
-              },
-            ].map((booking, index) => (
-              <View
-                key={index}
-                className="py-4 border-b border-gray-100 last:border-b-0"
-              >
-                <View className="flex-row items-center justify-between">
-                  <View className="flex-1">
-                    <Text className="text-gray-800 font-semibold mb-1">
-                      {booking.name}
-                    </Text>
-                    <Text className="text-gray-600 text-sm">
-                      {booking.event}
-                    </Text>
-                    <Text className="text-gray-500 text-sm">
-                      {booking.time}
-                    </Text>
-                  </View>
-                  <View
-                    className={`px-3 py-1 rounded-full ${
-                      booking.status === "confirmed"
-                        ? "bg-green-100"
-                        : "bg-yellow-100"
-                    }`}
-                  >
-                    <Text
-                      className={`text-xs font-medium ${
-                        booking.status === "confirmed"
-                          ? "text-green-600"
-                          : "text-yellow-600"
-                      }`}
-                    >
-                      {booking.status.charAt(0).toUpperCase() +
-                        booking.status.slice(1)}
-                    </Text>
-                  </View>
-                </View>
+            <View className="items-center py-8">
+              <Text className="text-gray-500 text-lg mb-2">
+                No upcoming bookings
+              </Text>
+              <Text className="text-gray-400 text-center">
+                Bookings will appear here when people schedule with you
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Schedule Tips */}
+        <View className="px-4 mb-6">
+          <View className="bg-blue-50 rounded-3xl p-6">
+            <Text className="text-lg font-bold text-blue-800 mb-3">
+              💡 Schedule Tips
+            </Text>
+            <View className="space-y-2">
+              <Text className="text-blue-700 text-sm">
+                • Set your available hours to let people book with you
+              </Text>
+              <Text className="text-blue-700 text-sm">
+                • Block time slots when you're not available
+              </Text>
+              <Text className="text-blue-700 text-sm">
+                • Booked slots are automatically protected from double-booking
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Bottom Spacing */}
+        <View className="h-20" />
+      </ScrollView>
+
+      {/* Schedule Editor Modal */}
+      <ScheduleEditor
+        visible={editorVisible}
+        schedule={schedule}
+        onClose={() => setEditorVisible(false)}
+      />
+    </SafeAreaView>
+  );
+}
+
               </View>
             ))}
           </View>
